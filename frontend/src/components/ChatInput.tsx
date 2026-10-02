@@ -1,6 +1,6 @@
-import React, { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, KeyboardEvent } from 'react';
 import { motion } from 'framer-motion';
-import { SendHorizontal } from 'lucide-react';
+import { SendHorizontal, Loader2 } from 'lucide-react';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -11,8 +11,10 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const canSend = text.trim().length > 0 && !disabled;
+
   const handleSend = () => {
-    if (text.trim() && !disabled) {
+    if (canSend) {
       onSend(text.trim());
       setText('');
       if (textareaRef.current) {
@@ -32,39 +34,52 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
     setText(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 140)}px`;
     }
   };
 
   return (
     <div className="relative">
-      <motion.div 
-        whileHover={{ scale: 1.01 }}
-        whileFocus={{ scale: 1.01 }}
-        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex items-end p-2 shadow-lg"
-      >
-        <textarea
-          ref={textareaRef}
-          value={text}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-          placeholder="Ask about an outdoor activity..."
-          className="flex-1 max-h-[120px] min-h-[44px] bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 resize-none py-3 px-4 text-sm"
-          rows={1}
-        />
-        <button
-          onClick={handleSend}
-          disabled={disabled || !text.trim()}
-          className={`p-3 rounded-xl m-1 transition-colors flex-shrink-0 ${
-            text.trim() && !disabled
-              ? 'bg-cyan-500 hover:bg-cyan-400 text-white'
-              : 'bg-white/5 text-gray-500'
-          }`}
-        >
-          <SendHorizontal className="w-5 h-5" />
-        </button>
-      </motion.div>
+      {/* Outer glow on focus */}
+      <div className={`absolute -inset-1 rounded-[22px] bg-gradient-to-r from-sky-500/20 via-indigo-500/20 to-sky-500/20 opacity-0 blur-lg transition-opacity duration-500 ${text ? 'opacity-100' : ''}`} />
+
+      <div className="relative rounded-2xl glass border border-white/[0.08] overflow-hidden transition-all duration-300 focus-within:border-sky-500/20">
+        <div className="flex items-end">
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            disabled={disabled}
+            placeholder="Ask about an outdoor activity..."
+            className="flex-1 max-h-[140px] min-h-[52px] bg-transparent text-white/90 placeholder-white/20 resize-none py-4 pl-5 pr-3 text-[14px] leading-relaxed focus:outline-none"
+            rows={1}
+          />
+          <div className="p-2">
+            <motion.button
+              whileHover={canSend ? { scale: 1.05 } : {}}
+              whileTap={canSend ? { scale: 0.95 } : {}}
+              onClick={handleSend}
+              disabled={!canSend}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                canSend
+                  ? 'bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40'
+                  : 'bg-white/[0.04] text-white/15'
+              }`}
+            >
+              {disabled ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <SendHorizontal className="w-4 h-4" />
+              )}
+            </motion.button>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-center text-[11px] text-white/15 mt-2.5 font-medium">
+        Powered by Open-Meteo live data · Responses grounded in SOPs
+      </p>
     </div>
   );
 }

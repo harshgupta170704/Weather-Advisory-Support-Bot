@@ -7,12 +7,12 @@ interface LocationModalProps {
 }
 
 const CITIES = [
-  { name: 'Bhopal', color: 'from-orange-600 to-yellow-600' },
-  { name: 'Delhi', color: 'from-blue-600 to-cyan-600' },
-  { name: 'Mumbai', color: 'from-purple-600 to-pink-600' },
-  { name: 'Bengaluru', color: 'from-emerald-600 to-teal-600' },
-  { name: 'Hyderabad', color: 'from-red-600 to-orange-600' },
-  { name: 'Pune', color: 'from-indigo-600 to-blue-600' },
+  { name: 'Bhopal', image: '/images/hero.jpg' },
+  { name: 'Delhi', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/IN-DL_New_Delhi_14_India_Gate_2013-10-12.jpg/800px-IN-DL_New_Delhi_14_India_Gate_2013-10-12.jpg' },
+  { name: 'Mumbai', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Mumbai_03-2016_31_Gateway_of_India.jpg/800px-Mumbai_03-2016_31_Gateway_of_India.jpg' },
+  { name: 'Bengaluru', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vidhana_Soudha_in_Bangalore.jpg/800px-Vidhana_Soudha_in_Bangalore.jpg' },
+  { name: 'Hyderabad', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Charminar_Hyderabad_1.jpg/800px-Charminar_Hyderabad_1.jpg' },
+  { name: 'Pune', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Shaniwar_Wada_Pune_India.jpg/800px-Shaniwar_Wada_Pune_India.jpg' },
 ];
 
 export function LocationModal({ onLocationSubmit }: LocationModalProps) {
@@ -30,10 +30,10 @@ export function LocationModal({ onLocationSubmit }: LocationModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#02040A]/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent"
     >
       {/* Decorative Top Nav (matches reference) */}
-      <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center pointer-events-none hidden md:flex">
+      <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center pointer-events-none hidden md:flex z-50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/50 flex items-center justify-center">
             <Shield className="w-6 h-6 text-blue-400" />
@@ -50,6 +50,86 @@ export function LocationModal({ onLocationSubmit }: LocationModalProps) {
           <span>•</span>
           <span>AI-powered guidance</span>
         </div>
+      </div>
+
+      {/* FLOATING 3D WEATHER CARDS */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden hidden xl:block">
+        
+        {/* Top Left: Bhopal */}
+        <motion.div 
+          initial={{ opacity: 0, x: -50, y: -50 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ delay: 0.2, duration: 1 }}
+          className="absolute top-[15%] left-[10%] w-[220px] rounded-2xl border border-white/20 shadow-[0_0_30px_rgba(34,211,238,0.2)] overflow-hidden bg-black/40 backdrop-blur-md"
+          style={{ transform: 'perspective(1000px) rotateY(15deg) rotateX(5deg)' }}
+        >
+          <div className="h-[120px] bg-cover bg-center" style={{ backgroundImage: `url(${CITIES[0].image})` }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-4">
+            <p className="text-[11px] text-gray-300 font-medium leading-none mb-1">Bhopal</p>
+            <p className="text-2xl font-bold text-white leading-none mb-1">28°</p>
+            <p className="text-[10px] text-gray-400">Clear sky</p>
+          </div>
+        </motion.div>
+
+        {/* Bottom Left: Mumbai */}
+        <motion.div 
+          initial={{ opacity: 0, x: -50, y: 50 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ delay: 0.4, duration: 1 }}
+          className="absolute bottom-[20%] left-[15%] w-[200px] rounded-2xl border border-white/20 shadow-[0_0_30px_rgba(34,211,238,0.2)] overflow-hidden bg-black/40 backdrop-blur-md"
+          style={{ transform: 'perspective(1000px) rotateY(20deg) rotateX(-5deg)' }}
+        >
+          <div className="h-[110px] bg-cover bg-center" style={{ backgroundImage: `url(${CITIES[2].image})` }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-4">
+            <p className="text-[11px] text-gray-300 font-medium leading-none mb-1">Mumbai</p>
+            <p className="text-2xl font-bold text-white leading-none mb-1">32°</p>
+            <p className="text-[10px] text-gray-400">Humid</p>
+          </div>
+        </motion.div>
+
+        {/* Top Right: Delhi */}
+        <motion.div 
+          initial={{ opacity: 0, x: 50, y: -50 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ delay: 0.3, duration: 1 }}
+          className="absolute top-[12%] right-[12%] w-[220px] rounded-2xl border border-white/20 shadow-[0_0_30px_rgba(34,211,238,0.2)] overflow-hidden bg-black/40 backdrop-blur-md"
+          style={{ transform: 'perspective(1000px) rotateY(-15deg) rotateX(5deg)' }}
+        >
+          <div className="h-[120px] bg-cover bg-center" style={{ backgroundImage: `url(${CITIES[1].image})` }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-4">
+            <p className="text-[11px] text-gray-300 font-medium leading-none mb-1">Delhi</p>
+            <p className="text-2xl font-bold text-white leading-none mb-1">24°</p>
+            <p className="text-[10px] text-gray-400">Haze</p>
+          </div>
+        </motion.div>
+
+        {/* Mid Right: Bengaluru */}
+        <motion.div 
+          initial={{ opacity: 0, x: 50, y: 0 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ delay: 0.5, duration: 1 }}
+          className="absolute top-[40%] right-[5%] w-[180px] rounded-2xl border border-white/20 shadow-[0_0_30px_rgba(34,211,238,0.2)] overflow-hidden bg-black/40 backdrop-blur-md"
+          style={{ transform: 'perspective(1000px) rotateY(-25deg) rotateX(10deg)' }}
+        >
+          <div className="h-[100px] bg-cover bg-center" style={{ backgroundImage: `url(${CITIES[3].image})` }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-4">
+            <p className="text-[11px] text-gray-300 font-medium leading-none mb-1">Bengaluru</p>
+            <p className="text-xl font-bold text-white leading-none mb-1">26°</p>
+            <p className="text-[10px] text-gray-400">Cloudy</p>
+          </div>
+        </motion.div>
+
+        {/* Bottom Right: Hyderabad */}
+        <motion.div 
+          initial={{ opacity: 0, x: 50, y: 50 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ delay: 0.6, duration: 1 }}
+          className="absolute bottom-[15%] right-[15%] w-[230px] rounded-2xl border border-white/20 shadow-[0_0_30px_rgba(34,211,238,0.2)] overflow-hidden bg-black/40 backdrop-blur-md"
+          style={{ transform: 'perspective(1000px) rotateY(-15deg) rotateX(-5deg)' }}
+        >
+          <div className="h-[130px] bg-cover bg-center" style={{ backgroundImage: `url(${CITIES[4].image})` }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-4">
+            <p className="text-[11px] text-gray-300 font-medium leading-none mb-1">Hyderabad</p>
+            <p className="text-2xl font-bold text-white leading-none mb-1">30°</p>
+            <p className="text-[10px] text-gray-400">Partly cloudy</p>
+          </div>
+        </motion.div>
+
       </div>
 
       <motion.div
@@ -113,13 +193,16 @@ export function LocationModal({ onLocationSubmit }: LocationModalProps) {
             <div className="w-full text-left">
               <p className="text-sm text-gray-400 mb-4 font-medium">Popular cities</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {CITIES.map((city) => (
+                {CITIES.map((city: any) => (
                   <button
                     key={city.name}
                     onClick={() => onLocationSubmit(city.name)}
                     className="flex items-center p-1.5 pr-4 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-cyan-500/50 transition-all group"
                   >
-                    <div className={`w-12 h-10 rounded-lg bg-gradient-to-br ${city.color} opacity-80 group-hover:opacity-100 transition-opacity mr-3 flex-shrink-0`} />
+                    <div 
+                      className="w-16 h-12 rounded-lg bg-cover bg-center opacity-80 group-hover:opacity-100 transition-opacity mr-3 flex-shrink-0 border border-white/10" 
+                      style={{ backgroundImage: `url(${city.image})` }} 
+                    />
                     <MapPin className="w-4 h-4 text-cyan-400 mr-2 shrink-0" />
                     <span className="text-sm font-bold text-gray-200 group-hover:text-white flex-1 text-left">{city.name}</span>
                     <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-cyan-400 transition-colors shrink-0" />

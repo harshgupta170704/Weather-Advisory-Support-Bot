@@ -31,7 +31,7 @@ export function useChat() {
     }
   }, [sessionId]);
 
-  const send = useCallback(async (content: string) => {
+  const send = useCallback(async (content: string, location?: string | null) => {
     if (!content.trim() || isLoading) return;
 
     // Ensure session exists
@@ -40,7 +40,7 @@ export function useChat() {
       currentSessionId = await initSession();
     }
 
-    // Add user message
+    // Add user message to UI (without the location prefix)
     const userMsg: ChatMessage = {
       id: generateId(),
       role: 'user',
@@ -61,7 +61,9 @@ export function useChat() {
     setIsLoading(true);
 
     try {
-      const response = await sendMessage(currentSessionId, content.trim());
+      // If location is provided, we silently append it for the backend context
+      const queryToSend = location ? `[Location Context: ${location}] ${content.trim()}` : content.trim();
+      const response = await sendMessage(currentSessionId, queryToSend);
 
       const assistantMsg: ChatMessage = {
         id: loadingMsg.id,

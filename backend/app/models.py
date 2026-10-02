@@ -70,6 +70,7 @@ class PolicyDecision(BaseModel):
 
 class ParsedIntent(BaseModel):
     """Structured output from the LLM intent parser."""
+    is_chit_chat: bool = False
     activity: str = ""
     activity_category: str = ""
     audience: str = "general"  # general | children | elderly | pets

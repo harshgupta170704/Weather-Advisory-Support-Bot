@@ -65,6 +65,7 @@ async def parse_question(state: WeatherAdvisorState) -> dict[str, Any]:
     )
 
     return {
+        "is_chit_chat": intent.is_chit_chat,
         "activity": intent.activity,
         "activity_category": intent.activity_category,
         "audience": intent.audience,
@@ -281,7 +282,24 @@ async def compose_answer_node(state: WeatherAdvisorState) -> dict[str, Any]:
     selected = state.get("selected_sop")
     status = state.get("status", "")
 
-    # ── Handle error / no-policy states without LLM ─────
+    # ── Handle chit-chat ────────────────────────────────
+    if state.get("is_chit_chat"):
+        intent = {"is_chit_chat": True}
+        answer = await compose_answer(
+            weather=None,
+            policy_decision=None,
+            parsed_intent=intent,
+            user_query=state.get("user_query", "")
+        )
+        return {
+            "final_answer": answer,
+            "status": "success",
+            "trace": state.get("trace", []) + [
+                {"step": "Compose Answer", "detail": "Chit-chat response generated", "status": "ok"}
+            ],
+        }
+
+    # ── Handle error states without LLM ─────
     if status == "location_error":
         msg = state.get("error_message", "I couldn't resolve that location.")
         return {
@@ -305,31 +323,8 @@ async def compose_answer_node(state: WeatherAdvisorState) -> dict[str, Any]:
             ],
         }
 
-    if status == "no_policy" and weather_dict:
-        weather = WeatherData(**weather_dict)
-        city = state.get("resolved_city", "your area")
-        answer = (
-            f"I don't have a specific policy covering this combination of activity "
-            f"and current weather conditions in {city}.\n\n"
-            f"**Current conditions:**\n"
-            f"- Temperature: {weather.temperature_c}°C\n"
-            f"- Precipitation: {weather.precipitation_mm} mm "
-            f"({weather.precipitation_probability}% probability)\n"
-            f"- Wind: {weather.wind_speed_kmh} km/h "
-            f"(gusts {weather.wind_gusts_kmh} km/h)\n"
-            f"- UV Index: {weather.uv_index}\n\n"
-            f"Since no policy applies, I can't provide a policy-backed recommendation. "
-            f"Use your own judgment based on these conditions."
-        )
-        return {
-            "final_answer": answer,
-            "trace": state.get("trace", []) + [
-                {"step": "Compose Answer", "detail": "No-policy response with weather facts", "status": "ok"}
-            ],
-        }
-
     # ── Normal path: compose with LLM ───────────────────
-    if weather_dict and selected:
+    if weather_dict:
         weather = WeatherData(**weather_dict)
         policy_dec = {
             "selected_sop": selected,
@@ -347,7 +342,7 @@ async def compose_answer_node(state: WeatherAdvisorState) -> dict[str, Any]:
             weather=weather,
             policy_decision=policy_dec,
             parsed_intent=intent,
-            user_query=state.get("user_query", ""),
+            user_query=state.get("user_query", "")
         )
 
         return {

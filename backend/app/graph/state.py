@@ -23,6 +23,7 @@ class WeatherAdvisorState(TypedDict, total=False):
     messages: list[dict[str, str]]
 
     # ── Parsed intent (from LLM) ────────────────────────
+    is_chit_chat: bool
     activity: str
     activity_category: str
     audience: str

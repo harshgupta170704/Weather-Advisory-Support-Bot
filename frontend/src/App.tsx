@@ -10,11 +10,13 @@ import { ChatInput } from '@/components/ChatInput';
 import { SuggestedPrompts } from '@/components/SuggestedPrompts';
 import { useChat } from '@/hooks/useChat';
 import { checkHealth } from '@/api/client';
+import { LocationModal } from '@/components/LocationModal';
 
 export default function App() {
   const { messages, isLoading, lastResponse, send, clearSession } = useChat();
   const [isConnected, setIsConnected] = useState(false);
   const [sopsLoaded, setSopsLoaded] = useState(0);
+  const [userLocation, setUserLocation] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Health check on mount
@@ -42,8 +44,18 @@ export default function App() {
   const location = lastResponse?.location ?? null;
   const hasMessages = messages.length > 0;
 
+  const handleSend = (content: string) => {
+    send(content, userLocation);
+  };
+
   return (
     <div className="min-h-screen bg-navy-900 relative">
+      <AnimatePresence>
+        {!userLocation && (
+          <LocationModal onLocationSubmit={setUserLocation} />
+        )}
+      </AnimatePresence>
+
       {/* Aurora background */}
       <div className="aurora-bg" />
 
@@ -53,6 +65,11 @@ export default function App() {
         <Header
           isConnected={isConnected}
           sopsLoaded={sopsLoaded}
+          userLocation={userLocation}
+          onChangeLocation={() => {
+            setUserLocation(null);
+            clearSession();
+          }}
           onClearSession={clearSession}
         />
 
@@ -100,7 +117,7 @@ export default function App() {
                     </div>
 
                     {/* Suggested prompts */}
-                    <SuggestedPrompts onSelect={send} />
+                    <SuggestedPrompts onSelect={handleSend} />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -121,7 +138,7 @@ export default function App() {
             {/* Input */}
             <div className="px-4 md:px-8 pb-4 md:pb-6">
               <div className="max-w-3xl mx-auto">
-                <ChatInput onSend={send} disabled={isLoading} />
+                <ChatInput onSend={handleSend} disabled={isLoading} />
               </div>
             </div>
           </div>

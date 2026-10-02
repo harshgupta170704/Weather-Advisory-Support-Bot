@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion';
-import { Shield, RotateCcw, Activity, Zap } from 'lucide-react';
+import { Shield, RotateCcw, Activity, Zap, MapPin } from 'lucide-react';
 
 interface HeaderProps {
   isConnected: boolean;
   sopsLoaded: number;
+  userLocation: string | null;
+  onChangeLocation: () => void;
   onClearSession: () => void;
 }
 
-export function Header({ isConnected, sopsLoaded, onClearSession }: HeaderProps) {
+export function Header({ isConnected, sopsLoaded, userLocation, onChangeLocation, onClearSession }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16">
       {/* Subtle bottom border glow */}
@@ -35,6 +37,16 @@ export function Header({ isConnected, sopsLoaded, onClearSession }: HeaderProps)
 
         {/* Status bar */}
         <div className="flex items-center gap-2.5">
+          {userLocation && (
+            <button
+              onClick={onChangeLocation}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full glass hover:bg-white/[0.04] text-[11px] font-semibold tracking-wide text-sky-400 transition-colors"
+            >
+              <MapPin className="w-3 h-3" />
+              <span>{userLocation}</span>
+            </button>
+          )}
+
           {/* Live indicator */}
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass text-[11px] font-semibold tracking-wide">
             <div className="relative flex items-center justify-center">

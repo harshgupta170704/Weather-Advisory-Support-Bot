@@ -26,6 +26,13 @@ from backend.app.graph.state import WeatherAdvisorState
 logger = logging.getLogger("climaguard.graph")
 
 
+def _route_after_parse(state: WeatherAdvisorState) -> str:
+    """Branch after intent parsing for chit-chat."""
+    if state.get("is_chit_chat"):
+        return "compose_answer"
+    return "resolve_location"
+
+
 def _route_after_location(state: WeatherAdvisorState) -> str:
     """Branch after location resolution."""
     if state.get("status") == "location_error":
@@ -56,8 +63,12 @@ def build_graph() -> StateGraph:
     # ── Define edges ────────────────────────────────────
     graph.set_entry_point("parse_question")
 
-    # Linear: parse → resolve_location
-    graph.add_edge("parse_question", "resolve_location")
+    # Conditional: parse -> compose (chit-chat) OR location
+    graph.add_conditional_edges(
+        "parse_question",
+        _route_after_parse,
+        {"compose_answer": "compose_answer", "resolve_location": "resolve_location"}
+    )
 
     # Conditional: location ok → fetch_weather | error → compose
     graph.add_conditional_edges(

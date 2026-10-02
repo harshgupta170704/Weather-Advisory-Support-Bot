@@ -59,6 +59,7 @@ INTENT_SYSTEM_PROMPT = """You are an intent parser for a weather advisory system
 
 You MUST output ONLY valid JSON with these fields:
 {
+  "is_chit_chat": <true if the user is making general conversation, asking your name, hobbies, or saying hi, false otherwise>,
   "activity": "<specific activity like cycling, running, picnic, walking, park visit>",
   "activity_category": "<one of: outdoor_exercise, travel, leisure, vulnerable_groups>",
   "audience": "<one of: general, children, elderly, pets>",
@@ -67,6 +68,7 @@ You MUST output ONLY valid JSON with these fields:
 }
 
 Rules:
+- If the user is just saying hi, asking your name, asking what you do, or making general conversation not related to checking weather safety, set is_chit_chat to true.
 - Extract what the user actually said. Do NOT add information.
 - If no location is mentioned, set location to "".
 - If no specific time is mentioned, set time_window to "current".
@@ -119,6 +121,7 @@ Previous conversation context (use as fallback for missing fields):
             parsed = json.loads(content)
 
         intent = ParsedIntent(
+            is_chit_chat=bool(parsed.get("is_chit_chat", False)),
             activity=parsed.get("activity", ""),
             activity_category=parsed.get("activity_category", ""),
             audience=parsed.get("audience", "general"),
@@ -155,25 +158,28 @@ Previous conversation context (use as fallback for missing fields):
 COMPOSE_SYSTEM_PROMPT = """You are a helpful, friendly weather advisory assistant called ClimaGuard. 
 
 CRITICAL RULES:
-1. Use ONLY the weather data provided below. Do NOT invent any weather values (temperature, wind, rain, etc.).
-2. If an SOP policy is provided, mention the SOP ID and summarize its pre-filled advice naturally.
-3. Reference the actual numeric values from the weather data in your response to ground it in reality.
-4. If NO SOP matched, that usually means there are no severe weather alerts for this activity! In this case, cheerfully summarize the weather and say it looks like a great day to go out, but clarify you are just basing this on the lack of active weather warnings.
-5. NEVER invent new SOPs or claim an SOP exists if none was provided.
+1. If the user is making general conversation (chit-chat), answer naturally. You can tell them your name (ClimaGuard) and purpose (providing deterministic safety advice for outdoor activities based on live weather data and strict policies).
+2. For weather queries, use ONLY the provided weather data. Do NOT invent weather values.
+3. If NO SOP matched, conditions are SAFE. You MUST begin your response with a decisive 'Yes, you should go!' or 'Yes, it looks great!' (or similar), then briefly summarize the nice weather.
+4. If an SOP matched with HIGH or CRITICAL severity, begin with a decisive 'No, you should not go' or 'Warning!'.
+5. Reference actual numeric values from the weather data in your response.
 6. Keep your response conversational and concise (2-4 sentences)."""
 
 
 def build_compose_prompt(
-    weather: WeatherData,
-    policy_decision: dict[str, Any],
+    weather: WeatherData | None,
+    policy_decision: dict[str, Any] | None,
     parsed_intent: dict[str, Any],
     user_query: str,
 ) -> str:
-    """Build the factual prompt for answer composition.
+    """Build the factual prompt for answer composition."""
+    
+    # Handle chit-chat branch
+    if parsed_intent.get("is_chit_chat"):
+        return f"""USER QUESTION: "{user_query}"
+        
+This is a general conversation query. Respond naturally and playfully as ClimaGuard."""
 
-    The weather sentence is built DETERMINISTICALLY here,
-    not by the LLM.
-    """
     # Deterministic weather facts string
     weather_facts = f"""WEATHER DATA (from Open-Meteo — these are the ONLY facts you may use):
 - Temperature: {weather.temperature_c}°C
@@ -185,7 +191,7 @@ def build_compose_prompt(
 - Observation Time: {weather.observed_at}
 - Time Window: {weather.requested_window}"""
 
-    selected = policy_decision.get("selected_sop")
+    selected = policy_decision.get("selected_sop") if policy_decision else None
     if selected:
         sop = selected["sop"]
         # Fill in the advice template with actual weather values
@@ -203,9 +209,10 @@ def build_compose_prompt(
 - Severity: {sop['severity']}
 - Reason: {sop['reason']}
 - Pre-filled Advice: {advice_text}
-- Matched Conditions: {selected.get('matched_conditions', {})}"""
+- Matched Conditions: {selected.get('matched_conditions', {})}
+Instruction: Begin with a decisive YES or NO based on severity, then explain."""
     else:
-        policy_text = "NO POLICY MATCHED. You must tell the user you have no applicable policy for this scenario. Do NOT make up safety advice."
+        policy_text = "NO RESTRICTIVE POLICY MATCHED. Instruction: Begin with a decisive 'Yes, you should go' or 'Yes, conditions are great', then summarize the pleasant weather."
 
     intent_text = f"""USER INTENT:
 - Activity: {parsed_intent.get('activity', 'unknown')}
@@ -221,19 +228,16 @@ def build_compose_prompt(
 
 USER QUESTION: "{user_query}"
 
-Compose a helpful, conversational response. Include the actual weather numbers and reference the SOP if one matched. Keep it concise."""
+Compose a helpful, conversational response following the rules."""
 
 
 async def compose_answer(
-    weather: WeatherData,
-    policy_decision: dict[str, Any],
+    weather: WeatherData | None,
+    policy_decision: dict[str, Any] | None,
     parsed_intent: dict[str, Any],
     user_query: str,
 ) -> str:
-    """Use the LLM to compose the final human-readable answer.
-
-    The LLM receives only structured facts — it cannot invent weather or SOPs.
-    """
+    """Use the LLM to compose the final human-readable answer."""
     model = get_chat_model()
     prompt = build_compose_prompt(weather, policy_decision, parsed_intent, user_query)
 
@@ -247,8 +251,10 @@ async def compose_answer(
         return response.content.strip()
     except Exception as exc:
         logger.error("Answer composition failed: %s", exc)
-        # Deterministic fallback — never leave the user without a response
-        selected = policy_decision.get("selected_sop")
+        if parsed_intent.get("is_chit_chat"):
+            return "Hello! I am ClimaGuard. How can I help you with outdoor safety today?"
+            
+        selected = policy_decision.get("selected_sop") if policy_decision else None
         if selected:
             sop = selected["sop"]
             return (

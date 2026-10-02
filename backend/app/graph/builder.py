@@ -1,15 +1,9 @@
-"""ClimaGuard — LangGraph pipeline builder.
+"""LangGraph pipeline — stitches all the nodes together.
 
-Constructs a REAL graph with genuine node boundaries, conditional
-branches, and failure paths. Not a single-node wrapper.
-
-Graph flow:
-  parse_question → resolve_location → [branch on error]
-                                        ├─ location_error → compose_answer → END
-                                        └─ ok → fetch_weather → [branch on error]
-                                                                  ├─ weather_error → compose_answer → END
-                                                                  └─ ok → evaluate_sops → resolve_match
-                                                                          → compose_answer → validate_answer → END
+The graph has real branching: if location fails, we skip weather+SOPs
+and go straight to an error response. Same for weather failures. This
+isn't a linear chain pretending to be a graph — the conditional edges
+actually matter.
 """
 
 from __future__ import annotations

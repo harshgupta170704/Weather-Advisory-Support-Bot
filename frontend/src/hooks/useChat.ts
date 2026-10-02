@@ -1,4 +1,4 @@
-// ClimaGuard — Chat hook for managing conversation state
+// Chat hook — handles messages, sessions, and talking to the backend
 
 import { useState, useCallback, useRef } from 'react';
 import { ChatMessage, ChatResponse } from '@/types';

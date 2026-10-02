@@ -1,8 +1,9 @@
-"""ClimaGuard — Deterministic Policy Engine.
+"""Deterministic policy engine — the core of the whole system.
 
-This module owns ALL safety decisions. The LLM never decides safety.
-SOPs are loaded from data/sops.yaml at startup. Adding a new SOP
-requires editing only that file — no code changes needed.
+This is where all the actual safety decisions happen. The key idea is
+that SOPs live in a YAML file (data/sops.yaml), so adding a new policy
+is just a config change. The engine checks each SOP's conditions against
+live weather, and if multiple match, picks the most severe one.
 """
 
 from __future__ import annotations
@@ -161,7 +162,9 @@ def evaluate_sops(
             selection_reason="No SOP conditions matched the current weather and activity.",
         )
 
-    # ── Deterministic resolution: severity DESC, then priority DESC ──
+    # Sort by severity first (CRITICAL > HIGH > ...), then priority as tiebreaker.
+    # I debated doing priority-first but severity makes more sense — a CRITICAL
+    # alert should always win even if it has lower priority number.
     matches.sort(
         key=lambda m: (SEVERITY_ORDER.get(m.sop.severity, 0), m.sop.priority),
         reverse=True,

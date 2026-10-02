@@ -1,7 +1,9 @@
-"""ClimaGuard — Open-Meteo weather & geocoding client.
+"""Open-Meteo weather & geocoding client.
 
-All weather facts originate here. The LLM never invents weather data.
-Supports dependency injection for testing via WeatherClientProtocol.
+Handles all the weather fetching logic. I went with Open-Meteo because
+it's free, reliable, and doesn't need an API key — one less thing to
+break during the demo. The WeatherClientProtocol lets us swap in mocks
+for testing without touching any real APIs.
 """
 
 from __future__ import annotations

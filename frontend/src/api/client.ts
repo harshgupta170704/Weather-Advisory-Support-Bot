@@ -1,8 +1,8 @@
-// ClimaGuard — API client
+// Thin API wrapper — all backend calls go through here
 
 import { ChatResponse } from '@/types';
 
-const API_BASE = '';  // Uses Vite proxy in dev, same origin in production
+const API_BASE = ''; // empty = same origin (vite proxy handles it in dev)
 
 export async function createSession(): Promise<string> {
   const res = await fetch(`${API_BASE}/api/session/new`, { method: 'POST' });

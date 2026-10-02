@@ -1,10 +1,11 @@
-"""ClimaGuard — LLM service with provider-agnostic interface.
+"""LLM service — provider-agnostic wrapper for OpenAI / Anthropic.
 
-The LLM is used ONLY for:
-  1. Parsing user intent (structured extraction)
-  2. Composing the final human-readable answer
+The LLM only does two things here:
+  1. Parse what the user is asking (structured intent extraction)
+  2. Write a nice-sounding response based on facts we give it
 
-The LLM NEVER decides weather safety or invents SOPs.
+It never gets to decide if something is safe — that's the policy
+engine's job. We basically treat it as a fancy text-in, text-out tool.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""ClimaGuard — Pydantic models used across the application."""
+"""Pydantic models shared across the app."""
 
 from __future__ import annotations
 

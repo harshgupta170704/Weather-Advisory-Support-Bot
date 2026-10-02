@@ -1,4 +1,4 @@
-"""ClimaGuard — Application configuration via environment variables."""
+"""App configuration — loads everything from .env"""
 
 from pydantic_settings import BaseSettings
 from typing import Optional

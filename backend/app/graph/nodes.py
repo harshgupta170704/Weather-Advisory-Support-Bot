@@ -1,16 +1,10 @@
-"""ClimaGuard — LangGraph node implementations.
+"""LangGraph node implementations.
 
-Each node is a focused function with a single responsibility.
-Nodes communicate through the shared WeatherAdvisorState.
-
-Architecture boundary:
-  - parse_question: LLM extracts structured intent
-  - resolve_location: deterministic API call
-  - fetch_weather: deterministic API call
-  - evaluate_sops: fully deterministic policy engine
-  - resolve_match: deterministic selection
-  - compose_answer: LLM composes response from structured facts
-  - validate_answer: deterministic validation
+Each function here is one step in the pipeline. I tried to keep them
+focused — one job per node. The important bit is that parse_question
+and compose_answer use the LLM, but everything else (weather fetching,
+SOP evaluation, validation) is pure deterministic code. That's the
+whole architectural point.
 """
 
 from __future__ import annotations

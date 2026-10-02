@@ -1,6 +1,7 @@
-"""ClimaGuard — LangGraph state definition.
+"""Graph state — the data that flows through every node.
 
-Strongly typed state object that flows through every graph node.
+Basically a big typed dict. Every node reads what it needs and writes
+its results back. Makes it easy to inspect what happened at each step.
 """
 
 from __future__ import annotations

@@ -1,10 +1,7 @@
-"""ClimaGuard — FastAPI application entry point.
+"""FastAPI entry point.
 
-Endpoints:
-  GET  /health          → health check
-  POST /api/chat        → main chat endpoint
-  POST /api/session/new → create a new session
-  GET  /api/sops        → list all loaded SOPs
+Nothing fancy here — just the REST endpoints, CORS setup, and session
+management. The heavy lifting happens in the LangGraph pipeline.
 """
 
 from __future__ import annotations
@@ -60,9 +57,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── In-memory session store ─────────────────────────────────
-# Trade-off: simple in-memory dict, no persistence across restarts.
-# Acceptable for an MVP / take-home assignment.
+# Quick and dirty session store. A dict is fine for a demo — in prod
+# you'd want Redis or something. Sessions die on server restart.
 _sessions: dict[str, dict[str, Any]] = {}
 
 

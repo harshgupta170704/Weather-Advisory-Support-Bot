@@ -1,14 +1,11 @@
-# ============================================================
-# ClimaGuard — Standard Operating Procedures (SOPs)
-# ============================================================
-# Each SOP is a self-contained policy rule. The deterministic
-# policy engine evaluates every SOP against live weather data
-# and the user's parsed intent. The LLM never decides safety.
+# Standard Operating Procedures for ClimaGuard
 #
-# TO ADD A NEW SOP:
-#   1. Append a new entry below with a unique id (e.g. SOP-016).
-#   2. No code changes are required — the engine auto-loads it.
-# ============================================================
+# These are the safety policies the system checks against. Each one
+# has conditions (weather thresholds) and activities it applies to.
+# The policy engine evaluates all of them and picks the most severe match.
+#
+# Want to add a new policy? Just append a new entry here with a
+# unique id. No code changes needed — the engine picks it up on restart.
 
 - id: "SOP-001"
   title: "Strong Winds — Cycling & Two-Wheelers"

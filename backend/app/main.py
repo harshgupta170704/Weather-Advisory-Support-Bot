@@ -18,10 +18,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from backend.app.config import settings
-from backend.app.graph.builder import advisor_graph
-from backend.app.graph.nodes import get_sops
-from backend.app.models import (
+from app.config import settings
+from app.graph.builder import advisor_graph
+from app.graph.nodes import get_sops
+from app.models import (
     ChatRequest,
     ChatResponse,
     LocationData,

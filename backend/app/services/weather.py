@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 import httpx
 
-from backend.app.models import LocationData, WeatherData
+from app.models import LocationData, WeatherData
 
 logger = logging.getLogger("climaguard.weather")
 

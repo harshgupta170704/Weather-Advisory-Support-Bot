@@ -17,8 +17,8 @@ from typing import Any
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from backend.app.config import settings
-from backend.app.models import ParsedIntent, WeatherData
+from app.config import settings
+from app.models import ParsedIntent, WeatherData
 
 logger = logging.getLogger("climaguard.llm")
 

@@ -13,17 +13,17 @@ import logging
 import re
 from typing import Any
 
-from backend.app.graph.state import WeatherAdvisorState
-from backend.app.models import ParsedIntent, WeatherData
-from backend.app.services.llm_service import compose_answer, parse_user_intent
-from backend.app.services.policy_engine import evaluate_sops, load_sops, SEVERITY_ORDER
-from backend.app.services.weather import (
+from app.graph.state import WeatherAdvisorState
+from app.models import ParsedIntent, WeatherData
+from app.services.llm_service import compose_answer, parse_user_intent
+from app.services.policy_engine import evaluate_sops, load_sops, SEVERITY_ORDER
+from app.services.weather import (
     LocationResolutionError,
     OpenMeteoClient,
     WeatherDataValidationError,
     WeatherFetchError,
 )
-from backend.app.config import settings
+from app.config import settings
 
 logger = logging.getLogger("climaguard.graph")
 

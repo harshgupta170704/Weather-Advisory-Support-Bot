@@ -14,7 +14,7 @@ from typing import Any
 
 import yaml
 
-from backend.app.models import (
+from app.models import (
     PolicyDecision,
     SOPCondition,
     SOPDefinition,

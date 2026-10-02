@@ -12,7 +12,7 @@ import logging
 
 from langgraph.graph import END, StateGraph
 
-from backend.app.graph.nodes import (
+from app.graph.nodes import (
     compose_answer_node,
     evaluate_sops_node,
     fetch_weather,
@@ -21,7 +21,7 @@ from backend.app.graph.nodes import (
     resolve_match,
     validate_answer,
 )
-from backend.app.graph.state import WeatherAdvisorState
+from app.graph.state import WeatherAdvisorState
 
 logger = logging.getLogger("climaguard.graph")
 

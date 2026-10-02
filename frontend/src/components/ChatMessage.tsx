@@ -49,7 +49,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
               </div>
             ) : (
-              <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-a:text-cyan-400">
+              <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-a:text-cyan-400 prose-img:rounded-xl prose-img:border prose-img:border-white/10 prose-img:w-full prose-img:max-h-64 prose-img:object-cover">
                 {isUser ? (
                   <p>{message.content}</p>
                 ) : (

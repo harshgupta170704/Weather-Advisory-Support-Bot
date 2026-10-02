@@ -34,7 +34,7 @@ class Settings(BaseSettings):
         if self.llm_provider == "anthropic":
             return "claude-sonnet-4-20250514"
         if self.llm_provider == "groq":
-            return "llama-3.3-70b-versatile" # Defaulting to OSS 70b
+            return "openai/gpt-oss-120b"
         return "gpt-4o-mini"
 
 

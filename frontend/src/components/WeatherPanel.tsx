@@ -12,16 +12,37 @@ export function WeatherPanel({ weather, location, userLocation }: WeatherPanelPr
   // If no real data, use mock data from reference image for the empty state
   const isMock = !weather || !location;
   
-  const displayLocation = isMock ? { city: userLocation || 'Bhopal', country: 'India' } : location;
+  const cityName = userLocation || 'Bhopal';
+  const displayLocation = isMock ? { city: cityName, country: 'India' } : location;
+  
+  // Deterministic mock data based on city length
+  const baseTemp = 25 + (cityName.length % 10);
+  const baseWind = 5 + (cityName.length % 5);
+  const baseRain = cityName.length % 3 === 0 ? 12 : 0;
+  
   const displayWeather = isMock ? {
-    temperature_c: 31.3,
-    precipitation_mm: 0,
-    precipitation_probability: 0,
-    wind_speed_kmh: 7.7,
-    wind_gusts_kmh: 19.1,
-    uv_index: 7.5,
+    temperature_c: baseTemp + 0.3,
+    precipitation_mm: baseRain,
+    precipitation_probability: baseRain > 0 ? 60 : 0,
+    wind_speed_kmh: baseWind + 0.7,
+    wind_gusts_kmh: baseWind * 2 + 1.1,
+    uv_index: 5 + (cityName.length % 4) + 0.5,
     observed_at: new Date().toISOString(),
   } : weather;
+
+  const getCityImage = (city: string) => {
+    const c = city.toLowerCase();
+    if (c.includes('delhi')) return 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/IN-DL_New_Delhi_14_India_Gate_2013-10-12.jpg/800px-IN-DL_New_Delhi_14_India_Gate_2013-10-12.jpg';
+    if (c.includes('mumbai')) return 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Mumbai_03-2016_31_Gateway_of_India.jpg/800px-Mumbai_03-2016_31_Gateway_of_India.jpg';
+    if (c.includes('bengaluru') || c.includes('bangalore')) return 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vidhana_Soudha_in_Bangalore.jpg/800px-Vidhana_Soudha_in_Bangalore.jpg';
+    if (c.includes('hyderabad')) return 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Charminar_Hyderabad_1.jpg/800px-Charminar_Hyderabad_1.jpg';
+    if (c.includes('pune')) return 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Shaniwar_Wada_Pune_India.jpg/800px-Shaniwar_Wada_Pune_India.jpg';
+    if (c.includes('bhopal')) return '/images/hero.jpg';
+    // Fallback: use picsum with city name as seed for a deterministic beautiful image
+    return `https://picsum.photos/seed/${encodeURIComponent(city)}/400/200`;
+  };
+
+  const heroImage = getCityImage(displayLocation.city);
 
   return (
     <div className="h-full flex flex-col pt-6 pb-6 px-4 overflow-y-auto">
@@ -36,7 +57,7 @@ export function WeatherPanel({ weather, location, userLocation }: WeatherPanelPr
         <div className="relative rounded-2xl overflow-hidden border border-white/10 group">
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-            style={{ backgroundImage: 'url(/images/hero.jpg)' }}
+            style={{ backgroundImage: `url(${heroImage})` }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
           

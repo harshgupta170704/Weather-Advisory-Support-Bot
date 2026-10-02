@@ -1,22 +1,22 @@
-// ClimaGuard — Main Application Component
-
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles } from 'lucide-react';
-import { Header } from '@/components/Header';
+import { AnimatePresence } from 'framer-motion';
+import { TopNav } from '@/components/TopNav';
+import { Sidebar } from '@/components/Sidebar';
 import { WeatherPanel } from '@/components/WeatherPanel';
 import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
-import { SuggestedPrompts } from '@/components/SuggestedPrompts';
+import { EmptyState } from '@/components/EmptyState';
+import { LocationModal } from '@/components/LocationModal';
+import { AtmosphericBackground } from '@/components/AtmosphericBackground';
 import { useChat } from '@/hooks/useChat';
 import { checkHealth } from '@/api/client';
-import { LocationModal } from '@/components/LocationModal';
 
 export default function App() {
   const { messages, isLoading, lastResponse, send, clearSession } = useChat();
   const [isConnected, setIsConnected] = useState(false);
   const [sopsLoaded, setSopsLoaded] = useState(0);
   const [userLocation, setUserLocation] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // For mobile
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Health check on mount
@@ -48,21 +48,22 @@ export default function App() {
     send(content, userLocation);
   };
 
+  const handleNewChat = () => {
+    clearSession();
+  };
+
   return (
-    <div className="min-h-screen bg-navy-900 relative">
+    <div className="min-h-screen bg-[#050817] relative text-gray-200">
+      <AtmosphericBackground />
+
       <AnimatePresence>
         {!userLocation && (
           <LocationModal onLocationSubmit={setUserLocation} />
         )}
       </AnimatePresence>
 
-      {/* Aurora background */}
-      <div className="aurora-bg" />
-
-      {/* Content */}
       <div className="relative z-10 flex flex-col h-screen pt-16">
-        {/* Header */}
-        <Header
+        <TopNav
           isConnected={isConnected}
           sopsLoaded={sopsLoaded}
           userLocation={userLocation}
@@ -73,78 +74,39 @@ export default function App() {
           onClearSession={clearSession}
         />
 
-        {/* Main content */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Chat area */}
-          <div className="flex-1 flex flex-col min-w-0">
-            {/* Messages or Hero */}
-            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
+        <div className="flex-1 flex overflow-hidden max-w-[1920px] mx-auto w-full">
+          {/* Left Sidebar - hidden on mobile, visible on lg */}
+          <div className="hidden lg:block h-full">
+            <Sidebar onNewChat={handleNewChat} sopsLoaded={sopsLoaded} />
+          </div>
+
+          {/* Center Chat Area */}
+          <div className="flex-1 flex flex-col min-w-0 h-full relative">
+            <div className="flex-1 overflow-y-auto px-4 md:px-8 xl:px-12 py-6">
               <AnimatePresence mode="wait">
                 {!hasMessages ? (
-                  <motion.div
-                    key="hero"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                    className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto"
-                  >
-                    {/* Hero icon */}
-                    <motion.div
-                      initial={{ scale: 0.8 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.6, ease: 'easeOut' }}
-                      className="mb-8"
-                    >
-                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 flex items-center justify-center">
-                        <Shield className="w-10 h-10 text-cyan-400" />
-                      </div>
-                    </motion.div>
-
-                    {/* Hero text */}
-                    <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-3">
-                      Weather decisions,{' '}
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                        grounded in policy
-                      </span>
-                    </h1>
-                    <p className="text-gray-400 text-center text-lg mb-2">
-                      Live conditions. Explicit policies. No guessing.
-                    </p>
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-10">
-                      <Sparkles className="w-4 h-4" />
-                      <span>Powered by Open-Meteo live data & deterministic SOPs</span>
-                    </div>
-
-                    {/* Suggested prompts */}
-                    <SuggestedPrompts onSelect={handleSend} />
-                  </motion.div>
+                  <EmptyState key="empty" onSelectPrompt={handleSend} />
                 ) : (
-                  <motion.div
-                    key="chat"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="max-w-3xl mx-auto space-y-1"
-                  >
+                  <div key="chat" className="max-w-4xl mx-auto pb-4">
                     {messages.map((msg) => (
                       <ChatMessage key={msg.id} message={msg} />
                     ))}
                     <div ref={messagesEndRef} />
-                  </motion.div>
+                  </div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Input */}
-            <div className="px-4 md:px-8 pb-4 md:pb-6">
-              <div className="max-w-3xl mx-auto">
-                <ChatInput onSend={handleSend} disabled={isLoading} />
+            {/* Input Area */}
+            <div className="px-4 md:px-8 xl:px-12 pb-6 pt-2 bg-gradient-to-t from-[#050817] via-[#050817]/90 to-transparent">
+              <div className="max-w-4xl mx-auto">
+                <ChatInput onSend={handleSend} disabled={isLoading || !userLocation} />
               </div>
             </div>
           </div>
 
-          {/* Weather panel — hidden on mobile, shown on lg+ */}
-          <div className="hidden lg:block w-80 xl:w-96 border-l border-white/5 overflow-y-auto">
+          {/* Right Weather Panel - visible when there are messages on xl */}
+          <div className="hidden xl:block w-[340px] 2xl:w-[380px] h-full border-l border-white/[0.06] bg-[#070A18]/30 backdrop-blur-md">
             <WeatherPanel weather={weather} location={location} />
           </div>
         </div>

@@ -1,6 +1,5 @@
-import React from 'react';
+import { MapPin, Droplets, CloudRain, Wind, Sun, Clock, Eye, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Thermometer, CloudRain, Droplets, Wind, Sun, Clock } from 'lucide-react';
 import { WeatherData, LocationData } from '@/types';
 
 interface WeatherPanelProps {
@@ -9,100 +8,100 @@ interface WeatherPanelProps {
 }
 
 export function WeatherPanel({ weather, location }: WeatherPanelProps) {
+  if (!weather || !location) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center p-8 text-center text-gray-500">
+        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+          <Activity className="w-8 h-8 text-gray-600 opacity-50" />
+        </div>
+        <p className="text-sm">Weather intelligence will appear here once you ask about an activity.</p>
+      </div>
+    );
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
+  };
+
   return (
-    <div className="p-6 h-full flex flex-col">
-      <h2 className="text-lg font-bold text-white mb-6">Current Conditions</h2>
-      <AnimatePresence mode="wait">
-        {!weather ? (
-          <motion.div
-            key="empty"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center text-gray-500 text-center text-sm px-4"
-          >
-            <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-              <CloudRain className="w-7 h-7 text-gray-600" />
+    <div className="h-full flex flex-col p-6 overflow-y-auto">
+      <div className="mb-6">
+        <h3 className="text-lg font-bold text-white tracking-tight leading-none mb-1">Current Conditions</h3>
+        <p className="text-[11px] font-medium text-gray-500 uppercase tracking-widest">Live Weather Context</p>
+      </div>
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="space-y-4"
+      >
+        {/* Location Banner */}
+        <motion.div variants={itemVariants} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+          <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+            <MapPin className="w-4 h-4 text-blue-400" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-white">{location.city}, {location.country}</p>
+            <p className="text-[10px] text-gray-400">Updated {new Date(weather.observed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
+        </motion.div>
+
+        {/* Hero Card */}
+        <motion.div variants={itemVariants} className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-cyan-900/40 to-blue-900/20 border border-cyan-500/20 shadow-[0_0_30px_-5px_rgba(34,211,238,0.15)] group">
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-cyan-500/20 blur-3xl rounded-full" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <Sun className="w-6 h-6 text-amber-400" />
+              <span className="text-sm font-semibold text-cyan-100">Clear sky</span>
             </div>
-            <p>Weather data will appear here after your first query.</p>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="data"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="space-y-5 flex-1"
-          >
-            {location && (
-              <div className="flex items-center space-x-2 text-cyan-400 bg-cyan-950/30 w-fit px-3 py-1.5 rounded-full border border-cyan-900/50">
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm font-medium">{location.city}, {location.country}</span>
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                <div className="flex items-center space-x-2 text-gray-400 mb-2">
-                  <Thermometer className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs uppercase tracking-wider">Temp</span>
-                </div>
-                <div className="text-2xl font-semibold text-white">{weather.temperature_c}°C</div>
-              </div>
-
-              <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                <div className="flex items-center space-x-2 text-gray-400 mb-2">
-                  <CloudRain className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs uppercase tracking-wider">Rain</span>
-                </div>
-                <div className="text-2xl font-semibold text-white">{weather.precipitation_mm}<span className="text-sm text-gray-400 ml-1">mm</span></div>
-              </div>
-
-              <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                <div className="flex items-center space-x-2 text-gray-400 mb-2">
-                  <Droplets className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs uppercase tracking-wider">Rain Prob.</span>
-                </div>
-                <div className="text-2xl font-semibold text-white">{weather.precipitation_probability}<span className="text-sm text-gray-400 ml-1">%</span></div>
-              </div>
-
-              <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                <div className="flex items-center space-x-2 text-gray-400 mb-2">
-                  <Wind className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs uppercase tracking-wider">Wind</span>
-                </div>
-                <div className="text-2xl font-semibold text-white">{weather.wind_speed_kmh}<span className="text-sm text-gray-400 ml-1">km/h</span></div>
-              </div>
-
-              <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                <div className="flex items-center space-x-2 text-gray-400 mb-2">
-                  <Wind className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs uppercase tracking-wider">Gusts</span>
-                </div>
-                <div className="text-2xl font-semibold text-white">{weather.wind_gusts_kmh}<span className="text-sm text-gray-400 ml-1">km/h</span></div>
-              </div>
-
-              <div className="bg-black/20 rounded-xl p-4 border border-white/5">
-                <div className="flex items-center space-x-2 text-gray-400 mb-2">
-                  <Sun className="w-4 h-4 text-cyan-400" />
-                  <span className="text-xs uppercase tracking-wider">UV Index</span>
-                </div>
-                <div className="text-2xl font-semibold text-white">{weather.uv_index}</div>
-              </div>
+            <div className="text-5xl font-extrabold text-white tracking-tighter mb-1">
+              {weather.temperature_c}°
             </div>
+            <p className="text-xs text-cyan-200/70 font-medium">Feels like {weather.temperature_c}°C</p>
+          </div>
+        </motion.div>
 
-            <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-white/10">
-              <div className="flex items-center space-x-1">
-                <Clock className="w-3 h-3" />
-                <span>{weather.observed_at ? new Date(weather.observed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</span>
-              </div>
-              <div className="bg-blue-900/30 px-2 py-1 rounded text-blue-300 border border-blue-900/50 text-[10px] font-medium">
-                {weather.source || 'Open-Meteo'}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* 2-Column Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <WeatherCard variants={itemVariants} icon={Droplets} label="Rainfall" value={`${weather.precipitation_mm} mm`} color="text-blue-400" />
+          <WeatherCard variants={itemVariants} icon={CloudRain} label="Rain Prob." value={`${weather.precipitation_probability}%`} color="text-indigo-400" />
+          <WeatherCard variants={itemVariants} icon={Wind} label="Wind Speed" value={`${weather.wind_speed_kmh} km/h`} color="text-sky-400" />
+          <WeatherCard variants={itemVariants} icon={Wind} label="Wind Gusts" value={`${weather.wind_gusts_kmh} km/h`} color="text-orange-400" />
+          <WeatherCard variants={itemVariants} icon={Sun} label="UV Index" value={weather.uv_index.toString()} color="text-amber-400" />
+          <WeatherCard variants={itemVariants} icon={Eye} label="Condition" value="Clear" color="text-emerald-400" />
+        </div>
+
+        {/* Source Badge */}
+        <motion.div variants={itemVariants} className="mt-8 flex justify-center">
+          <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+            Live data via Open-Meteo
+          </span>
+        </motion.div>
+      </motion.div>
     </div>
+  );
+}
+
+function WeatherCard({ icon: Icon, label, value, color, variants }: any) {
+  return (
+    <motion.div 
+      variants={variants}
+      whileHover={{ y: -2 }}
+      className="p-3.5 rounded-xl glass hover:bg-white/[0.06] hover:border-cyan-500/30 transition-all cursor-default"
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <Icon className={`w-3.5 h-3.5 ${color}`} />
+        <span className="text-[10px] uppercase font-bold tracking-wider text-gray-500">{label}</span>
+      </div>
+      <p className="text-lg font-bold text-gray-200">{value}</p>
+    </motion.div>
   );
 }

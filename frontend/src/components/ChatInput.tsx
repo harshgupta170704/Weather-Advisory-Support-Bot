@@ -1,85 +1,70 @@
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { SendHorizontal } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { SendHorizontal, Loader2 } from 'lucide-react';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export function ChatInput({ onSend, disabled }: ChatInputProps) {
-  const [text, setText] = useState('');
+  const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const canSend = text.trim().length > 0 && !disabled;
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+    }
+  }, [input]);
 
   const handleSend = () => {
-    if (canSend) {
-      onSend(text.trim());
-      setText('');
+    if (input.trim() && !disabled) {
+      onSend(input);
+      setInput('');
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
       }
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 140)}px`;
-    }
-  };
-
   return (
-    <div className="relative">
-      {/* Outer glow on focus */}
-      <div className={`absolute -inset-1 rounded-[22px] bg-gradient-to-r from-sky-500/20 via-indigo-500/20 to-sky-500/20 opacity-0 blur-lg transition-opacity duration-500 ${text ? 'opacity-100' : ''}`} />
-
-      <div className="relative rounded-2xl glass border border-white/[0.08] overflow-hidden transition-all duration-300 focus-within:border-sky-500/20">
-        <div className="flex items-end">
-          <textarea
-            ref={textareaRef}
-            value={text}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            disabled={disabled}
-            placeholder="Ask about an outdoor activity..."
-            className="flex-1 max-h-[140px] min-h-[52px] bg-transparent text-white/90 placeholder-white/20 resize-none py-4 pl-5 pr-3 text-[14px] leading-relaxed focus:outline-none"
-            rows={1}
-          />
-          <div className="p-2">
-            <motion.button
-              whileHover={canSend ? { scale: 1.05 } : {}}
-              whileTap={canSend ? { scale: 0.95 } : {}}
-              onClick={handleSend}
-              disabled={!canSend}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                canSend
-                  ? 'bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40'
-                  : 'bg-white/[0.04] text-white/15'
-              }`}
-            >
-              {disabled ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <SendHorizontal className="w-4 h-4" />
-              )}
-            </motion.button>
-          </div>
-        </div>
+    <div className="relative group w-full">
+      <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-violet-500/10 rounded-3xl blur-md opacity-30 group-focus-within:opacity-60 transition duration-500" />
+      
+      <div className="relative flex items-end bg-[#0a0e1a]/90 rounded-3xl border border-white/10 shadow-inner p-2 focus-within:border-cyan-500/40 transition-colors">
+        <textarea
+          ref={textareaRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+          placeholder="Ask about an outdoor activity..."
+          className="flex-1 bg-transparent text-white px-4 py-3 max-h-[120px] outline-none resize-none placeholder:text-gray-500 text-[15px]"
+          rows={1}
+        />
+        
+        <motion.button
+          whileHover={{ scale: disabled || !input.trim() ? 1 : 1.05 }}
+          whileTap={{ scale: disabled || !input.trim() ? 1 : 0.95 }}
+          onClick={handleSend}
+          disabled={disabled || !input.trim()}
+          className={`mb-1 mr-1 p-3 rounded-full flex items-center justify-center transition-all ${
+            input.trim() && !disabled
+              ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_-3px_rgba(34,211,238,0.4)]'
+              : 'bg-white/5 text-gray-500'
+          }`}
+        >
+          <SendHorizontal className="w-5 h-5" />
+        </motion.button>
       </div>
-
-      <p className="text-center text-[11px] text-white/15 mt-2.5 font-medium">
-        Powered by Open-Meteo live data · Responses grounded in SOPs
-      </p>
     </div>
   );
 }

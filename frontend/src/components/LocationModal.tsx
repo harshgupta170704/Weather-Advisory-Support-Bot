@@ -8,11 +8,11 @@ interface LocationModalProps {
 
 const CITIES = [
   { name: 'Bhopal', image: '/images/hero.jpg' },
-  { name: 'Delhi', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/IN-DL_New_Delhi_14_India_Gate_2013-10-12.jpg/800px-IN-DL_New_Delhi_14_India_Gate_2013-10-12.jpg' },
-  { name: 'Mumbai', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Mumbai_03-2016_31_Gateway_of_India.jpg/800px-Mumbai_03-2016_31_Gateway_of_India.jpg' },
-  { name: 'Bengaluru', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vidhana_Soudha_in_Bangalore.jpg/800px-Vidhana_Soudha_in_Bangalore.jpg' },
-  { name: 'Hyderabad', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Charminar_Hyderabad_1.jpg/800px-Charminar_Hyderabad_1.jpg' },
-  { name: 'Pune', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Shaniwar_Wada_Pune_India.jpg/800px-Shaniwar_Wada_Pune_India.jpg' },
+  { name: 'Delhi', image: '/images/delhi.jpg' },
+  { name: 'Mumbai', image: '/images/mumbai.jpg' },
+  { name: 'Bengaluru', image: '/images/bengaluru.jpg' },
+  { name: 'Hyderabad', image: '/images/hyderabad.jpg' },
+  { name: 'Pune', image: '/images/pune.jpg' },
 ];
 
 export function LocationModal({ onLocationSubmit }: LocationModalProps) {

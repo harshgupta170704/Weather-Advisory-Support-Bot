@@ -7,6 +7,7 @@ import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
 import { EmptyState } from '@/components/EmptyState';
 import { LocationModal } from '@/components/LocationModal';
+import { PoliciesModal } from '@/components/PoliciesModal';
 import { AtmosphericBackground } from '@/components/AtmosphericBackground';
 import { useChat } from '@/hooks/useChat';
 import { checkHealth } from '@/api/client';
@@ -16,6 +17,7 @@ export default function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [sopsLoaded, setSopsLoaded] = useState(0);
   const [userLocation, setUserLocation] = useState<string | null>(null);
+  const [isPoliciesOpen, setIsPoliciesOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,25 +59,28 @@ export default function App() {
         {!userLocation && (
           <LocationModal onLocationSubmit={setUserLocation} />
         )}
+        <PoliciesModal isOpen={isPoliciesOpen} onClose={() => setIsPoliciesOpen(false)} />
       </AnimatePresence>
 
-      <div className="relative z-10 flex h-full max-w-[1920px] mx-auto w-full">
-        {/* Left Sidebar */}
-        <div className="hidden lg:block w-72 h-full flex-shrink-0">
-          <Sidebar onNewChat={handleNewChat} userLocation={userLocation} />
-        </div>
+      {userLocation && (
+        <div className="relative z-10 flex h-full max-w-[1920px] mx-auto w-full">
+          {/* Left Sidebar */}
+          <div className="hidden lg:block w-72 h-full flex-shrink-0">
+            <Sidebar onNewChat={handleNewChat} userLocation={userLocation} onOpenPolicies={() => setIsPoliciesOpen(true)} />
+          </div>
 
-        {/* Center Main Area */}
-        <div className="flex-1 flex flex-col min-w-0 h-full relative border-l border-white/5">
-          <TopNav
-            isConnected={isConnected}
-            sopsLoaded={sopsLoaded}
-            userLocation={userLocation}
-            onChangeLocation={() => {
-              setUserLocation(null);
-              clearSession();
-            }}
-          />
+          {/* Center Main Area */}
+          <div className="flex-1 flex flex-col min-w-0 h-full relative border-l border-white/5">
+            <TopNav
+              isConnected={isConnected}
+              sopsLoaded={sopsLoaded}
+              userLocation={userLocation}
+              onChangeLocation={() => {
+                setUserLocation(null);
+                clearSession();
+              }}
+              onOpenPolicies={() => setIsPoliciesOpen(true)}
+            />
 
           <div className="flex-1 overflow-y-auto px-4 md:px-8 xl:px-12 pb-6 relative z-10 flex flex-col">
             <AnimatePresence mode="wait">
@@ -105,7 +110,8 @@ export default function App() {
         <div className="hidden xl:block w-[360px] 2xl:w-[400px] h-full border-l border-white/5 bg-[#02040A]/60 backdrop-blur-2xl">
           <WeatherPanel weather={weather} location={location} userLocation={userLocation} />
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

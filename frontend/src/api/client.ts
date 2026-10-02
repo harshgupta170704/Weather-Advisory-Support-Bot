@@ -2,7 +2,8 @@
 
 import { ChatResponse } from '@/types';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+// Automatically use the live Render backend in production, or localhost in development
+const API_BASE = import.meta.env.DEV ? '' : 'https://weather-advisory-support-bot-0wjf.onrender.com';
 
 export async function createSession(): Promise<string> {
   const res = await fetch(`${API_BASE}/api/session/new`, { method: 'POST' });

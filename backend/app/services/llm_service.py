@@ -163,12 +163,13 @@ CRITICAL RULES:
 3. If NO SOP matched, conditions are SAFE. You MUST begin your response with a decisive 'Yes, you should go!' or 'Yes, it looks great!' (or similar), then briefly summarize the nice weather.
 4. If an SOP matched with HIGH or CRITICAL severity, begin with a decisive 'No, you should not go' or 'Warning!'.
 5. Reference actual numeric values from the weather data in your response.
-6. If conditions are SAFE (no SOP matched), you MUST also do the following at the end of your response:
-   - Suggest a generic type of place to go (e.g., "a shaded park").
-   - Include a Markdown image of the activity formatted EXACTLY like this: `![{activity}](https://loremflickr.com/800/400/{activity},outdoor)`
-   - Include a Google Maps search link formatted EXACTLY like this: `[📍 Find {activity} spots in {location} on Google Maps](https://www.google.com/maps/search/{activity}+spots+in+{location})`
-   (Replace {activity} and {location} with the actual activity (no spaces) and city name. For the Google Maps URL, use '+' instead of spaces).
-7. Keep your response conversational and concise."""
+6. If conditions are SAFE (no SOP matched), you MUST output exactly this markdown at the very end of your response:
+
+![image](https://loremflickr.com/800/400/nature,outdoor)
+[📍 Open Google Maps to find places in {location}](https://www.google.com/maps/search/parks+and+recreation+in+{location})
+
+(Replace {location} with the city name, using '+' for spaces in the URL. DO NOT wrap the links or images in backticks, output them as raw markdown).
+7. Keep your text response conversational and concise."""
 
 
 def build_compose_prompt(

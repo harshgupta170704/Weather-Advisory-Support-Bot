@@ -62,7 +62,7 @@ export default function App() {
       <div className="relative z-10 flex h-full max-w-[1920px] mx-auto w-full">
         {/* Left Sidebar */}
         <div className="hidden lg:block w-72 h-full flex-shrink-0">
-          <Sidebar onNewChat={handleNewChat} />
+          <Sidebar onNewChat={handleNewChat} userLocation={userLocation} />
         </div>
 
         {/* Center Main Area */}
@@ -103,7 +103,7 @@ export default function App() {
         </div>
         {/* Right Weather Panel */}
         <div className="hidden xl:block w-[360px] 2xl:w-[400px] h-full border-l border-white/5 bg-[#02040A]/60 backdrop-blur-2xl">
-          <WeatherPanel weather={weather} location={location} />
+          <WeatherPanel weather={weather} location={location} userLocation={userLocation} />
         </div>
       </div>
     </div>

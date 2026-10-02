@@ -5,13 +5,14 @@ import { WeatherData, LocationData } from '@/types';
 interface WeatherPanelProps {
   weather: WeatherData | null;
   location: LocationData | null;
+  userLocation?: string | null;
 }
 
-export function WeatherPanel({ weather, location }: WeatherPanelProps) {
+export function WeatherPanel({ weather, location, userLocation }: WeatherPanelProps) {
   // If no real data, use mock data from reference image for the empty state
   const isMock = !weather || !location;
   
-  const displayLocation = isMock ? { city: 'Bhopal', country: 'India' } : location;
+  const displayLocation = isMock ? { city: userLocation || 'Bhopal', country: 'India' } : location;
   const displayWeather = isMock ? {
     temperature_c: 31.3,
     precipitation_mm: 0,

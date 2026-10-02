@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     llm_provider: str = "openai"
     openai_api_key: Optional[str] = None
     anthropic_api_key: Optional[str] = None
+    groq_api_key: Optional[str] = None
     llm_model: Optional[str] = None
 
     # Server
@@ -32,6 +33,8 @@ class Settings(BaseSettings):
             return self.llm_model
         if self.llm_provider == "anthropic":
             return "claude-sonnet-4-20250514"
+        if self.llm_provider == "groq":
+            return "llama-3.1-70b-versatile" # Defaulting to OSS 70b
         return "gpt-4o-mini"
 
 

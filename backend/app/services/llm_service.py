@@ -35,6 +35,14 @@ def get_chat_model() -> Any:
             temperature=0,
             max_tokens=1024,
         )
+    elif provider == "groq":
+        from langchain_groq import ChatGroq
+        return ChatGroq(
+            model_name=settings.resolved_model,
+            groq_api_key=settings.groq_api_key,
+            temperature=0,
+            max_tokens=1024,
+        )
     else:
         from langchain_openai import ChatOpenAI
         return ChatOpenAI(

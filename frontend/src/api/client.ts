@@ -2,7 +2,7 @@
 
 import { ChatResponse } from '@/types';
 
-const API_BASE = ''; // empty = same origin (vite proxy handles it in dev)
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export async function createSession(): Promise<string> {
   const res = await fetch(`${API_BASE}/api/session/new`, { method: 'POST' });

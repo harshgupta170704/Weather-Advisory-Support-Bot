@@ -50,7 +50,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen bg-[#02050E] relative text-gray-200 font-sans overflow-hidden">
+    <div className="h-screen bg-transparent relative text-gray-200 font-sans overflow-hidden">
       <AtmosphericBackground />
 
       <AnimatePresence>
@@ -101,7 +101,8 @@ export default function App() {
             </div>
           )}
         </div>
-        <div className="hidden xl:block w-[360px] 2xl:w-[400px] h-full border-l border-white/5 bg-[#02050E]/80 backdrop-blur-md">
+        {/* Right Weather Panel */}
+        <div className="hidden xl:block w-[360px] 2xl:w-[400px] h-full border-l border-white/5 bg-[#02040A]/60 backdrop-blur-2xl">
           <WeatherPanel weather={weather} location={location} />
         </div>
       </div>

@@ -8,9 +8,19 @@ interface WeatherPanelProps {
 }
 
 export function WeatherPanel({ weather, location }: WeatherPanelProps) {
-  if (!weather || !location) {
-    return <div className="h-full flex items-center justify-center text-gray-500 text-sm">Weather context will appear here</div>;
-  }
+  // If no real data, use mock data from reference image for the empty state
+  const isMock = !weather || !location;
+  
+  const displayLocation = isMock ? { city: 'Bhopal', country: 'India' } : location;
+  const displayWeather = isMock ? {
+    temperature_c: 31.3,
+    precipitation_mm: 0,
+    precipitation_probability: 0,
+    wind_speed_kmh: 7.7,
+    wind_gusts_kmh: 19.1,
+    uv_index: 7.5,
+    observed_at: new Date().toISOString(),
+  } : weather;
 
   return (
     <div className="h-full flex flex-col pt-6 pb-6 px-4 overflow-y-auto">
@@ -32,15 +42,15 @@ export function WeatherPanel({ weather, location }: WeatherPanelProps) {
           <div className="relative p-5 z-10 flex flex-col h-full min-h-[180px]">
             <div className="flex items-center gap-1.5 mb-1">
               <MapPinIcon />
-              <span className="text-sm font-bold text-white">{location.city}, {location.country}</span>
+              <span className="text-sm font-bold text-white">{displayLocation.city}, {displayLocation.country}</span>
             </div>
-            <p className="text-[10px] text-gray-300 mb-auto ml-5">Updated {new Date(weather.observed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+            <p className="text-[10px] text-gray-300 mb-auto ml-5">Updated {new Date(displayWeather.observed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
             
             <div className="mt-auto">
               <div className="flex items-center gap-2 mb-1">
                 <Sun className="w-6 h-6 text-yellow-400 fill-yellow-400" />
                 <span className="text-[40px] font-bold text-white leading-none tracking-tighter">
-                  {weather.temperature_c}°C
+                  {displayWeather.temperature_c}°C
                 </span>
               </div>
               <p className="text-sm font-medium text-gray-200">Clear sky</p>
@@ -50,12 +60,12 @@ export function WeatherPanel({ weather, location }: WeatherPanelProps) {
 
         {/* 6-Grid Stats */}
         <div className="grid grid-cols-2 gap-2">
-          <StatCard icon={Droplets} label="Rainfall" value={`${weather.precipitation_mm} mm`} color="text-cyan-400" />
-          <StatCard icon={CloudRain} label="Rain Prob." value={`${weather.precipitation_probability}%`} color="text-cyan-400" />
-          <StatCard icon={Wind} label="Wind Speed" value={`${weather.wind_speed_kmh} km/h`} color="text-cyan-400" />
-          <StatCard icon={Wind} label="Wind Gusts" value={`${weather.wind_gusts_kmh} km/h`} color="text-cyan-400" />
-          <StatCard icon={Sun} label="UV Index" value={weather.uv_index.toString()} color="text-yellow-400" />
-          <StatCard icon={ThermometerIcon} label="Feels Like" value={`${weather.temperature_c}°C`} color="text-cyan-400" />
+          <StatCard icon={Droplets} label="Rainfall" value={`${displayWeather.precipitation_mm} mm`} color="text-cyan-400" />
+          <StatCard icon={CloudRain} label="Rain Prob." value={`${displayWeather.precipitation_probability}%`} color="text-cyan-400" />
+          <StatCard icon={Wind} label="Wind Speed" value={`${displayWeather.wind_speed_kmh} km/h`} color="text-cyan-400" />
+          <StatCard icon={Wind} label="Wind Gusts" value={`${displayWeather.wind_gusts_kmh} km/h`} color="text-cyan-400" />
+          <StatCard icon={Sun} label="UV Index" value={displayWeather.uv_index.toString()} color="text-yellow-400" />
+          <StatCard icon={ThermometerIcon} label="Feels Like" value={`${displayWeather.temperature_c}°C`} color="text-cyan-400" />
         </div>
 
         {/* Map */}

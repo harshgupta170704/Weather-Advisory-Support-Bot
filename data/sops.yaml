@@ -1,0 +1,510 @@
+# ============================================================
+# ClimaGuard — Standard Operating Procedures (SOPs)
+# ============================================================
+# Each SOP is a self-contained policy rule. The deterministic
+# policy engine evaluates every SOP against live weather data
+# and the user's parsed intent. The LLM never decides safety.
+#
+# TO ADD A NEW SOP:
+#   1. Append a new entry below with a unique id (e.g. SOP-016).
+#   2. No code changes are required — the engine auto-loads it.
+# ============================================================
+
+- id: "SOP-001"
+  title: "Strong Winds — Cycling & Two-Wheelers"
+  category: "outdoor_exercise"
+  severity: "HIGH"
+  priority: 90
+  description: >
+    High wind speeds make cycling and two-wheeler travel dangerous
+    due to loss of balance and reduced vehicle control.
+  activities:
+    - cycling
+    - biking
+    - bike
+    - bicycle
+    - two_wheeler
+    - scooter
+    - motorcycle
+    - motorbike
+  intent_hints:
+    - ride my bike
+    - cycle to work
+    - take my scooter
+    - commute by bike
+    - go for a ride
+  conditions:
+    wind_speed_kmh:
+      gte: 40
+  advice: >
+    Cycling and two-wheeler travel is not recommended. Wind speeds
+    of {wind_speed_kmh} km/h with gusts up to {wind_gusts_kmh} km/h
+    significantly increase the risk of accidents. Consider using
+    enclosed transport or postponing your trip.
+  fallback_message: "Avoid cycling or two-wheeler travel in strong winds."
+  reason: "Wind speed exceeds safe threshold for two-wheeled vehicles."
+
+- id: "SOP-002"
+  title: "Very High UV — Outdoor Exercise"
+  category: "outdoor_exercise"
+  severity: "HIGH"
+  priority: 85
+  description: >
+    UV index above 8 poses serious sunburn and heat-related illness
+    risk during prolonged outdoor exercise.
+  activities:
+    - cycling
+    - running
+    - jogging
+    - walking
+    - hiking
+    - trekking
+    - outdoor_exercise
+    - workout
+    - sports
+  intent_hints:
+    - go for a run
+    - exercise outside
+    - outdoor workout
+    - morning jog
+    - afternoon walk
+  conditions:
+    uv_index:
+      gte: 8
+  advice: >
+    Outdoor exercise is not recommended right now. The UV index is
+    {uv_index}, which is in the "very high" range. Prolonged exposure
+    increases the risk of sunburn and heat exhaustion. If you must
+    exercise, choose early morning or late evening hours and wear
+    SPF 50+ sunscreen.
+  fallback_message: "Avoid prolonged outdoor exercise when UV is very high."
+  reason: "UV index exceeds safe outdoor exercise threshold."
+
+- id: "SOP-003"
+  title: "High Precipitation Probability — Outdoor Travel"
+  category: "travel"
+  severity: "MODERATE"
+  priority: 70
+  description: >
+    When precipitation probability is high, outdoor travel plans
+    should be reconsidered, especially for unprotected modes.
+  activities:
+    - travel
+    - commute
+    - commuting
+    - drive
+    - driving
+    - road_trip
+    - two_wheeler
+    - cycling
+    - biking
+    - walking
+  intent_hints:
+    - travel today
+    - should I commute
+    - go out
+    - head to work
+    - road trip
+  conditions:
+    precipitation_probability:
+      gte: 70
+  advice: >
+    Travel plans may be affected. The precipitation probability is
+    {precipitation_probability}% with expected rainfall of
+    {precipitation_mm} mm. If using a two-wheeler or walking,
+    consider an alternate mode of transport or carry rain gear.
+  fallback_message: "High chance of rain — plan for wet conditions during travel."
+  reason: "Precipitation probability exceeds comfortable travel threshold."
+
+- id: "SOP-004"
+  title: "Active Heavy Rainfall — Outdoor Activities"
+  category: "outdoor_exercise"
+  severity: "CRITICAL"
+  priority: 95
+  description: >
+    Active heavy precipitation makes most outdoor activities unsafe
+    due to reduced visibility, slippery surfaces, and flooding risk.
+  activities:
+    - cycling
+    - running
+    - walking
+    - hiking
+    - picnic
+    - park
+    - outdoor
+    - sports
+    - travel
+    - commute
+    - two_wheeler
+  intent_hints:
+    - go outside
+    - outdoor activity
+    - head out
+  conditions:
+    precipitation_mm:
+      gte: 10
+  advice: >
+    Outdoor activities are strongly discouraged. Current precipitation
+    is {precipitation_mm} mm, indicating heavy rainfall. Roads may be
+    waterlogged and visibility is likely poor. Stay indoors or wait
+    for conditions to improve.
+  fallback_message: "Heavy rain — stay indoors and avoid outdoor activities."
+  reason: "Active heavy precipitation makes outdoor conditions unsafe."
+
+- id: "SOP-005"
+  title: "Extreme Heat — Children Outdoors"
+  category: "vulnerable_groups"
+  severity: "HIGH"
+  priority: 88
+  description: >
+    Children are more vulnerable to heat-related illness. High
+    temperatures require extra precautions or activity cancellation.
+  activities:
+    - park
+    - playground
+    - outdoor_play
+    - sports
+    - walking
+    - picnic
+    - outing
+  intent_hints:
+    - take my kid
+    - children outside
+    - child to the park
+    - kids play
+    - son to playground
+    - daughter outside
+  conditions:
+    temperature_c:
+      gte: 38
+  advice: >
+    Taking children outdoors is not recommended. The temperature is
+    {temperature_c}°C, which poses a risk of heat exhaustion and
+    dehydration for children. If outdoor time is necessary, limit it
+    to short periods with ample shade, water, and sun protection.
+  fallback_message: "Too hot for children outdoors — keep them hydrated and in shade."
+  reason: "Temperature exceeds safe threshold for children's outdoor activity."
+
+- id: "SOP-006"
+  title: "Extreme Heat — Elderly Outdoors"
+  category: "vulnerable_groups"
+  severity: "HIGH"
+  priority: 87
+  description: >
+    Elderly individuals are at elevated risk of heat stroke and
+    cardiovascular stress in very hot conditions.
+  activities:
+    - walking
+    - park
+    - outing
+    - travel
+    - outdoor
+    - exercise
+  intent_hints:
+    - elderly parents
+    - grandparents
+    - senior citizen
+    - old parents walk
+    - aged family member
+  conditions:
+    temperature_c:
+      gte: 36
+  advice: >
+    Outdoor activity for elderly individuals is not recommended.
+    The temperature is {temperature_c}°C. Elderly people are at
+    higher risk of heat stroke and dehydration. Suggest indoor
+    activities or outings during cooler hours (early morning or
+    after sunset).
+  fallback_message: "Heat risk for elderly — avoid peak-heat outdoor activity."
+  reason: "Temperature exceeds safe threshold for elderly outdoor activity."
+
+- id: "SOP-007"
+  title: "Very Low Temperature — Vulnerable Groups"
+  category: "vulnerable_groups"
+  severity: "HIGH"
+  priority: 86
+  description: >
+    Very cold conditions increase hypothermia risk, especially
+    for children, elderly, and pets.
+  activities:
+    - walking
+    - park
+    - outdoor
+    - outing
+    - exercise
+    - picnic
+    - travel
+  intent_hints:
+    - take my kid
+    - elderly parents
+    - walk with child
+    - pet outside
+    - dog walk
+  conditions:
+    temperature_c:
+      lte: 5
+  advice: >
+    Outdoor activity for vulnerable individuals (children, elderly,
+    pets) is not recommended. The temperature is {temperature_c}°C.
+    Risk of hypothermia and cold-related illness increases. Ensure
+    warm clothing if going out is unavoidable and limit exposure time.
+  fallback_message: "Very cold — limit outdoor exposure for vulnerable groups."
+  reason: "Temperature below safe threshold for vulnerable groups."
+
+- id: "SOP-008"
+  title: "Strong Wind Gusts — Park & Family Outings"
+  category: "leisure"
+  severity: "MODERATE"
+  priority: 65
+  description: >
+    Wind gusts can make park visits unpleasant and potentially
+    hazardous due to falling branches and debris.
+  activities:
+    - park
+    - picnic
+    - family_outing
+    - outdoor_gathering
+    - playground
+    - garden
+  intent_hints:
+    - go to the park
+    - family outing
+    - outdoor gathering
+    - sit in the garden
+  conditions:
+    wind_gusts_kmh:
+      gte: 50
+  advice: >
+    Park and outdoor family activities may be unsafe. Wind gusts
+    of {wind_gusts_kmh} km/h can cause falling branches and make
+    temporary structures (tents, umbrellas) unstable. Consider an
+    indoor alternative or wait for calmer conditions.
+  fallback_message: "Strong gusts — outdoor family activities may be hazardous."
+  reason: "Wind gusts exceed safe level for open-area leisure activities."
+
+- id: "SOP-009"
+  title: "Rain — Picnic & Outdoor Leisure"
+  category: "leisure"
+  severity: "MODERATE"
+  priority: 68
+  description: >
+    Rain makes picnics and casual outdoor gatherings impractical
+    and uncomfortable.
+  activities:
+    - picnic
+    - park
+    - outdoor_lunch
+    - barbecue
+    - garden_party
+    - outdoor_gathering
+    - family_outing
+  intent_hints:
+    - good for a picnic
+    - eat outside
+    - park lunch
+    - sit outside in the park
+    - casual outdoor outing
+    - outdoor family gathering
+  conditions:
+    precipitation_mm:
+      gte: 2
+  advice: >
+    A picnic or outdoor leisure activity is not ideal right now.
+    Current precipitation is {precipitation_mm} mm with a
+    {precipitation_probability}% chance of rain. Consider moving
+    plans indoors or rescheduling to a drier period.
+  fallback_message: "Rain expected — outdoor leisure activities not ideal."
+  reason: "Active or likely precipitation makes outdoor leisure impractical."
+
+- id: "SOP-010"
+  title: "Rain — Outdoor Exercise (Running, Walking)"
+  category: "outdoor_exercise"
+  severity: "LOW"
+  priority: 50
+  description: >
+    Light to moderate rain during exercise increases slip risk
+    but is not necessarily dangerous for fit adults.
+  activities:
+    - running
+    - jogging
+    - walking
+    - hiking
+  intent_hints:
+    - go for a run
+    - morning jog
+    - walk in rain
+    - jog today
+  conditions:
+    precipitation_mm:
+      gte: 1
+    precipitation_probability:
+      gte: 50
+  advice: >
+    Exercise is possible but conditions are wet. Current precipitation
+    is {precipitation_mm} mm with {precipitation_probability}% rain
+    probability. Surfaces may be slippery — wear appropriate footwear,
+    stay visible, and avoid areas prone to waterlogging.
+  fallback_message: "Wet conditions — take precautions if exercising outdoors."
+  reason: "Active rain requires precautions during outdoor exercise."
+
+- id: "SOP-011"
+  title: "Moderate Wind — Cycling Advisory"
+  category: "outdoor_exercise"
+  severity: "LOW"
+  priority: 45
+  description: >
+    Moderate winds make cycling more strenuous but not necessarily
+    dangerous for experienced riders.
+  activities:
+    - cycling
+    - biking
+    - bike
+    - bicycle
+  intent_hints:
+    - ride my bike
+    - cycle to work
+    - go cycling
+  conditions:
+    wind_speed_kmh:
+      gte: 25
+  advice: >
+    Cycling is possible but expect resistance. Wind speed is
+    {wind_speed_kmh} km/h with gusts of {wind_gusts_kmh} km/h.
+    Ride cautiously, avoid exposed routes, and be aware of sudden
+    gusts that may affect balance.
+  fallback_message: "Moderate wind — cycle with caution."
+  reason: "Wind is noticeable and may affect cycling comfort and safety."
+
+- id: "SOP-012"
+  title: "High UV — Casual Outdoor Time"
+  category: "leisure"
+  severity: "MODERATE"
+  priority: 60
+  description: >
+    High UV during casual outdoor time (parks, picnics) increases
+    sunburn risk, especially with extended exposure.
+  activities:
+    - picnic
+    - park
+    - outdoor_gathering
+    - family_outing
+    - walking
+    - outing
+  intent_hints:
+    - spend time outside
+    - go to the park
+    - picnic today
+    - afternoon outside
+  conditions:
+    uv_index:
+      gte: 6
+  advice: >
+    Outdoor leisure is possible but take sun precautions. The UV
+    index is {uv_index} (high range). Apply sunscreen, wear hats
+    and sunglasses, and seek shade during peak hours (11 AM – 3 PM).
+    Limit continuous sun exposure to under 30 minutes.
+  fallback_message: "High UV — use sun protection for outdoor leisure."
+  reason: "UV index warrants sun protection during outdoor leisure."
+
+- id: "SOP-013"
+  title: "Combined Adverse Conditions — General Outdoor Activity"
+  category: "outdoor_exercise"
+  severity: "HIGH"
+  priority: 80
+  description: >
+    When multiple weather factors are simultaneously unfavorable
+    (heat + wind, rain + cold, etc.), the combined effect is worse
+    than any single factor alone.
+  activities:
+    - outdoor
+    - exercise
+    - travel
+    - commute
+    - cycling
+    - running
+    - walking
+    - park
+    - picnic
+    - outing
+  intent_hints:
+    - go outside
+    - any outdoor activity
+    - head out
+    - outdoor plans
+  conditions:
+    # Requires ALL conditions to be met (combined stress)
+    temperature_c:
+      gte: 35
+    wind_speed_kmh:
+      gte: 30
+  advice: >
+    Multiple adverse conditions are present simultaneously.
+    Temperature is {temperature_c}°C and wind speed is
+    {wind_speed_kmh} km/h. The combination of heat and wind
+    increases dehydration and fatigue risk. Postpone outdoor
+    activities until conditions improve.
+  fallback_message: "Multiple adverse conditions — avoid outdoor activities."
+  reason: "Combined adverse weather factors increase overall risk."
+
+- id: "SOP-014"
+  title: "Moderate Rain Probability — Two-Wheeler Commute"
+  category: "travel"
+  severity: "LOW"
+  priority: 40
+  description: >
+    Moderate rain probability should prompt two-wheeler commuters
+    to prepare for wet conditions.
+  activities:
+    - two_wheeler
+    - scooter
+    - motorcycle
+    - biking
+    - cycling
+    - commute
+    - commuting
+  intent_hints:
+    - ride to work
+    - commute by bike
+    - take my scooter
+  conditions:
+    precipitation_probability:
+      gte: 40
+  advice: >
+    There is a {precipitation_probability}% chance of rain.
+    If commuting by two-wheeler, carry rain gear and allow extra
+    travel time. Roads may become slippery if rain occurs.
+    Consider alternate transport if the probability rises.
+  fallback_message: "Moderate rain chance — carry rain gear for two-wheeler travel."
+  reason: "Rain probability warrants preparation for two-wheeler commuters."
+
+- id: "SOP-015"
+  title: "Extreme Cold — Outdoor Exercise"
+  category: "outdoor_exercise"
+  severity: "MODERATE"
+  priority: 72
+  description: >
+    Very cold conditions require proper preparation for outdoor
+    exercise to avoid hypothermia and muscle injury.
+  activities:
+    - running
+    - jogging
+    - cycling
+    - hiking
+    - walking
+    - exercise
+    - sports
+  intent_hints:
+    - go for a run
+    - exercise outside
+    - morning jog
+    - workout outdoors
+  conditions:
+    temperature_c:
+      lte: 3
+  advice: >
+    Outdoor exercise requires caution. The temperature is
+    {temperature_c}°C. Risk of hypothermia and muscle strain
+    increases. Wear layers, warm up indoors first, and keep
+    sessions shorter than usual. Avoid if wind chill is severe.
+  fallback_message: "Very cold — dress warmly and limit outdoor exercise."
+  reason: "Low temperature increases injury and hypothermia risk during exercise."

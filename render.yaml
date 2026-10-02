@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: climaguard
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: LLM_PROVIDER
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false

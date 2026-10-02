@@ -19,9 +19,7 @@
 
   <br />
   
-  <a href="https://weather-advisory-support-bot.vercel.app">
-    <img src="https://img.shields.io/badge/🔴_LIVE_DEMO-weather--advisory--support--bot.vercel.app-red?style=for-the-badge" alt="Live Demo" />
-  </a>
+  <h3><a href="https://weather-advisory-support-bot.vercel.app">🔴 Live Demo</a></h3>
 
 </div>
 

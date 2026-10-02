@@ -16,10 +16,8 @@ export default function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [sopsLoaded, setSopsLoaded] = useState(0);
   const [userLocation, setUserLocation] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // For mobile
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Health check on mount
   useEffect(() => {
     const check = async () => {
       try {
@@ -35,7 +33,6 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -53,7 +50,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050817] relative text-gray-200">
+    <div className="h-screen bg-[#02050E] relative text-gray-200 font-sans overflow-hidden">
       <AtmosphericBackground />
 
       <AnimatePresence>
@@ -62,53 +59,50 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <div className="relative z-10 flex flex-col h-screen pt-16">
-        <TopNav
-          isConnected={isConnected}
-          sopsLoaded={sopsLoaded}
-          userLocation={userLocation}
-          onChangeLocation={() => {
-            setUserLocation(null);
-            clearSession();
-          }}
-          onClearSession={clearSession}
-        />
+      <div className="relative z-10 flex h-full max-w-[1920px] mx-auto w-full">
+        {/* Left Sidebar */}
+        <div className="hidden lg:block w-72 h-full flex-shrink-0">
+          <Sidebar onNewChat={handleNewChat} />
+        </div>
 
-        <div className="flex-1 flex overflow-hidden max-w-[1920px] mx-auto w-full">
-          {/* Left Sidebar - hidden on mobile, visible on lg */}
-          <div className="hidden lg:block h-full">
-            <Sidebar onNewChat={handleNewChat} sopsLoaded={sopsLoaded} />
+        {/* Center Main Area */}
+        <div className="flex-1 flex flex-col min-w-0 h-full relative border-l border-white/5">
+          <TopNav
+            isConnected={isConnected}
+            sopsLoaded={sopsLoaded}
+            userLocation={userLocation}
+            onChangeLocation={() => {
+              setUserLocation(null);
+              clearSession();
+            }}
+          />
+
+          <div className="flex-1 overflow-y-auto px-4 md:px-8 xl:px-12 pb-6 relative z-10 flex flex-col">
+            <AnimatePresence mode="wait">
+              {!hasMessages ? (
+                <EmptyState key="empty" onSelectPrompt={handleSend} />
+              ) : (
+                <div key="chat" className="max-w-4xl mx-auto pt-6 pb-24 w-full flex-1">
+                  {messages.map((msg) => (
+                    <ChatMessage key={msg.id} message={msg} />
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Center Chat Area */}
-          <div className="flex-1 flex flex-col min-w-0 h-full relative">
-            <div className="flex-1 overflow-y-auto px-4 md:px-8 xl:px-12 py-6">
-              <AnimatePresence mode="wait">
-                {!hasMessages ? (
-                  <EmptyState key="empty" onSelectPrompt={handleSend} />
-                ) : (
-                  <div key="chat" className="max-w-4xl mx-auto pb-4">
-                    {messages.map((msg) => (
-                      <ChatMessage key={msg.id} message={msg} />
-                    ))}
-                    <div ref={messagesEndRef} />
-                  </div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Input Area */}
-            <div className="px-4 md:px-8 xl:px-12 pb-6 pt-2 bg-gradient-to-t from-[#050817] via-[#050817]/90 to-transparent">
+          {/* Input Area (Only show in chat mode) */}
+          {hasMessages && (
+            <div className="px-4 md:px-8 xl:px-12 pb-6 pt-2 bg-gradient-to-t from-[#02050E] via-[#02050E]/90 to-transparent relative z-20">
               <div className="max-w-4xl mx-auto">
                 <ChatInput onSend={handleSend} disabled={isLoading || !userLocation} />
               </div>
             </div>
-          </div>
-
-          {/* Right Weather Panel - visible when there are messages on xl */}
-          <div className="hidden xl:block w-[340px] 2xl:w-[380px] h-full border-l border-white/[0.06] bg-[#070A18]/30 backdrop-blur-md">
-            <WeatherPanel weather={weather} location={location} />
-          </div>
+          )}
+        </div>
+        <div className="hidden xl:block w-[360px] 2xl:w-[400px] h-full border-l border-white/5 bg-[#02050E]/80 backdrop-blur-md">
+          <WeatherPanel weather={weather} location={location} />
         </div>
       </div>
     </div>

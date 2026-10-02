@@ -17,6 +17,10 @@
     <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
   </div>
 
+  <br />
+  
+  [![Live Demo](https://img.shields.io/badge/🔴_LIVE_DEMO-weather--advisory--support--bot.vercel.app-red?style=for-the-badge)](https://weather-advisory-support-bot.vercel.app)
+
 </div>
 
 ---

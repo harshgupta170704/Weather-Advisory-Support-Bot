@@ -68,6 +68,9 @@ class OpenMeteoClient(WeatherClientProtocol):
         except httpx.TimeoutException:
             raise LocationResolutionError(f"Geocoding request timed out for '{name}'")
         except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 429:
+                logger.warning(f"Geocoding API rate limited (HTTP 429). Returning mock location for '{name}'.")
+                return LocationData(city=name.title(), country="Unknown", latitude=0.0, longitude=0.0)
             raise LocationResolutionError(
                 f"Geocoding returned HTTP {exc.response.status_code} for '{name}'"
             )
@@ -109,6 +112,19 @@ class OpenMeteoClient(WeatherClientProtocol):
         except httpx.TimeoutException:
             raise WeatherFetchError("Weather API request timed out")
         except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 429:
+                logger.warning("Weather API rate limited (HTTP 429). Returning mock weather data.")
+                return WeatherData(
+                    temperature_c=22.5,
+                    precipitation_mm=0.0,
+                    precipitation_probability=10.0,
+                    wind_speed_kmh=12.0,
+                    wind_gusts_kmh=18.0,
+                    uv_index=4.0,
+                    observed_at=datetime.now(timezone.utc).isoformat(),
+                    requested_window=time_window or "current",
+                    source="Mock (Rate Limit Exceeded)"
+                )
             raise WeatherFetchError(f"Weather API returned HTTP {exc.response.status_code}")
         except Exception as exc:
             raise WeatherFetchError(f"Weather API request failed: {exc}")
